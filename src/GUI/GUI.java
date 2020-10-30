@@ -19,13 +19,12 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
+
 import Logica.Casilla;
+import Logica.Digito;
 import Logica.Reloj;
 import Logica.Sudoku;
 
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -35,9 +34,11 @@ import java.awt.event.MouseEvent;
 
 public class GUI {
 
-	private JFrame frmSudoku;
-	private Sudoku sudoku;
-	private Reloj reloj;
+	protected JFrame frmSudoku;
+	protected Sudoku sudoku;
+	protected Reloj reloj;
+	protected JLabel[][] jLabels;
+	Timer[] timers;
 	
 
 	/**
@@ -74,16 +75,16 @@ public class GUI {
 		frmSudoku.setResizable(false);
 		frmSudoku.setTitle("Sudoku");
 		frmSudoku.getContentPane().setBackground(Color.DARK_GRAY);
-		frmSudoku.setBounds(100, 100, 985, 700);
+		frmSudoku.setBounds(100, 100, 1005, 700);
 		frmSudoku.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmSudoku.getContentPane().setLayout(null);
 		
 		JPanel clockPanel = new JPanel();
-		clockPanel.setBackground(Color.BLACK);
+		clockPanel.setBackground(Color.LIGHT_GRAY);
 		clockPanel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
-		clockPanel.setBounds(660, 10, 300, 70);
+		clockPanel.setBounds(660, 10, 320, 70);
 		frmSudoku.getContentPane().add(clockPanel);
-		clockPanel.setLayout(new GridLayout(0, 4, 0, 0));
+		clockPanel.setLayout(new GridLayout(0, 5, 0, 0));
 		
 		JPanel gamePanel = new JPanel();
 		gamePanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -91,7 +92,6 @@ public class GUI {
 		gamePanel.setBounds(10, 10, 640, 640);
 		frmSudoku.getContentPane().add(gamePanel);
 		gamePanel.setLayout(new GridLayout(9, 9, 1, 1));
-		
 		
 		inicializarSudoku(gamePanel);
 		inicializarReloj(clockPanel);
@@ -111,17 +111,20 @@ public class GUI {
 			System.exit(1);
 		}
 		
+		jLabels = new JLabel[sudoku.getCantFilas()][sudoku.getCantFilas()];
+		
 		//Toma todas las referencias a casillas de la instancia Sudoku, y las asigna a JLabel en paneles.
 		for (int i = 0; i <sudoku.getCantFilas(); i++) 
 		{
 			for(int j =0; j<sudoku.getCantFilas(); j++) 
 			{
 				Casilla c = sudoku.getCasilla(i,j);
-				ImageIcon grafico = c.getEntidadGrafica().getGrafico();
+				ImageIcon grafico = c.getGrafica().getGrafico();
 				JLabel label = new JLabel();
 				label.setOpaque(true);
 				label.setBackground(Color.LIGHT_GRAY);
 				
+				jLabels[i][j] = label;
 				gamePanel.add(label);
 				
 				label.addComponentListener(new ComponentAdapter() 
@@ -144,30 +147,42 @@ public class GUI {
 						{
 							sudoku.accionar(c);
 							reDimensionar(label,grafico);
-
-							if(c.getEstado() == false)
+							
+							for (int k = 0; k < jLabels.length; k++) 
 							{
-								Border border = BorderFactory.createLineBorder(Color.RED, 3);
-								label.setBorder(border);
-							}
-							else
-							{
-								label.setBorder(null);
+								for(int l = 0; l< jLabels.length; l++) 
+								{
+									Boolean estado = sudoku.getCasilla(k, l).getEstado();
+									
+									if(estado != null)
+									{
+										if(estado == false)
+										{
+											Border border = BorderFactory.createLineBorder(Color.RED, 3);
+											jLabels[k][l].setBorder(border);
+										}
+										else if(estado == true)
+										{
+											jLabels[k][l].setBorder(null);
+										}
+									}
+								}
 							}
 
 							if(sudoku.ganoSudoku())
 							{
+								for (int i=0; i<timers.length; i++)
+								{
+									timers[i].stop();
+								}
+								
 								JFrame f = new JFrame();  
 								JOptionPane.showMessageDialog(f,"¡VICTORIA!");
+								
 								System.exit(1);
 							}
 						}
 					});
-				}
-				else
-				{
-					Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
-					label.setBorder(border);
 				}
 			}
 		}
@@ -177,33 +192,51 @@ public class GUI {
 	{
 		reloj = new Reloj();
 		
-		JLabel clock1 = new JLabel("");
-		clock1.setIcon(new ImageIcon(GUI.class.getResource("/img/Number_0.png")));
-		clock1.setHorizontalAlignment(SwingConstants.CENTER);
-		clockPanel.add(clock1);
+		timers = new Timer[reloj.getCantDigitos()];
 		
-		JLabel clock2 = new JLabel("");
-		clock2.setIcon(new ImageIcon(GUI.class.getResource("/img/Number_0.png")));
-		clock2.setHorizontalAlignment(SwingConstants.CENTER);
-		clockPanel.add(clock2);
-		
-		JLabel clock3 = new JLabel("");
-		clock3.setIcon(new ImageIcon(GUI.class.getResource("/img/Number_0.png")));
-		clock3.setHorizontalAlignment(SwingConstants.CENTER);
-		clockPanel.add(clock3);
-		
-		JLabel clock4 = new JLabel("");
-		clock4.setIcon(new ImageIcon(GUI.class.getResource("/img/Number_0.png")));
-		clock4.setHorizontalAlignment(SwingConstants.CENTER);
-		clockPanel.add(clock4);
-		
-		Timer timer = new Timer(1000, new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                reloj.accionar();
-            }
-        });
+		for(int j=0; j<reloj.getCantDigitos(); j++) 
+		{
+			Digito d = reloj.getDigito(j);
+			
+			ImageIcon grafico = d.getGrafica().getGrafico();
+			JLabel label = new JLabel();
+			
+			clockPanel.add(label);
+			
+			label.addComponentListener(new ComponentAdapter() 
+			{
+				@Override
+				public void componentResized(ComponentEvent e) 
+				{
+					reDimensionar(label, grafico);
+					label.setIcon(grafico);
+				}
+			});
+			
+			Timer timer = new Timer(1000, new ActionListener(){
+	            @Override
+	            public void actionPerformed(ActionEvent e) 
+	            {
+	                reloj.actualizar();
+	                reDimensionar(label, grafico);
+	            }
+	        });
+			
+			timer.start();
+			timers[j]=timer;
+			
+			if(j==1)
+			{
+				JLabel lblSeparador = new JLabel(":");
+				lblSeparador.setHorizontalAlignment(SwingConstants.CENTER);
+				label.setOpaque(true);
+				label.setBackground(Color.LIGHT_GRAY);
+				lblSeparador.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 48));
+				lblSeparador.setForeground(Color.WHITE);
+				lblSeparador.setSize(64, 64);
+				clockPanel.add(lblSeparador);
+			}
+		}
 	}
 	
 	private void reDimensionar(JLabel label, ImageIcon grafico) 

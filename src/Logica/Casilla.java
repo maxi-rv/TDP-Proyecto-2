@@ -1,10 +1,9 @@
 package Logica;
 
-public class Casilla
+public class Casilla extends Celda
 {
 	//ATRIBUTOS
-	protected Integer numero;
-	protected ContenedorGraficoDeCasilla grafico;
+	ContenedorGraficoCasilla grafico;
 	protected Boolean estado;
 	protected int fila;
 	protected int columna;
@@ -15,7 +14,7 @@ public class Casilla
 	public Casilla(int fila, int columna)
 	{
 		this.numero = null;
-		this.grafico = new ContenedorGraficoDeCasilla();
+		this.grafico = new ContenedorGraficoCasilla();
 		this.estado = null;
 		this.fila = fila;
 		this.columna = columna;
@@ -72,14 +71,14 @@ public class Casilla
 		}
 	}
 	
-	public ContenedorGraficoDeCasilla getEntidadGrafica() 
+	public ContenedorGrafico getGrafica() 
 	{
 		return this.grafico;
 	}
 	
-	public void setGrafica(ContenedorGraficoDeCasilla g) 
+	public void setGrafica(ContenedorGrafico g) 
 	{
-		this.grafico = g;
+		this.grafico = (ContenedorGraficoCasilla) g;
 	}
 	
 	public int getFila()
@@ -90,5 +89,10 @@ public class Casilla
 	public int getColumna()
 	{
 		return this.columna;
+	}
+
+	public void setTipoJugable() 
+	{
+		grafico.setTipoJugable();
 	}
 }

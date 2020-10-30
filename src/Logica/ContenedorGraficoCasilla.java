@@ -1,16 +1,12 @@
 package Logica;
 import javax.swing.ImageIcon;
 
-public class ContenedorGraficoDeCasilla
+public class ContenedorGraficoCasilla extends ContenedorGrafico
 {
-	//ATRIBUTOS
-	protected ImageIcon imagen;
-	protected String[] rutaImagenes;
-	
 	/*
 	 * Crea un Contenedor Grafico de imagenes.
 	 */
-	public ContenedorGraficoDeCasilla()
+	public ContenedorGraficoCasilla()
 	{
 		this.imagen = new ImageIcon();
 		this.rutaImagenes = new String[]{"/img/Blocks_1.png", "/img/Blocks_2.png", 
@@ -50,5 +46,13 @@ public class ContenedorGraficoDeCasilla
 	public void setImagenes(String[] imagenes) 
 	{
 		this.rutaImagenes = imagenes;
+	}
+
+	public void setTipoJugable() 
+	{
+		this.rutaImagenes = new String[]{"/img/Blocks_1_Green.png", "/img/Blocks_2_Green.png", 
+				"/img/Blocks_3_Green.png", "/img/Blocks_4_Green.png", "/img/Blocks_5_Green.png", 
+				"/img/Blocks_6_Green.png", "/img/Blocks_7_Green.png", "/img/Blocks_8_Green.png", 
+				"/img/Blocks_9_Green.png"};
 	}
 }

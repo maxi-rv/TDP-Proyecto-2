@@ -1,11 +1,8 @@
 package Logica;
 
-public class Digito
+public class Digito extends Celda
 {
 	//ATRIBUTOS
-	protected Integer numero;
-	protected ContenedorGraficoDeCasilla grafico;
-	protected Boolean estado;
 	protected int posicion;
 	
 	/*
@@ -14,72 +11,42 @@ public class Digito
 	public Digito()
 	{
 		this.numero = null;
-		this.grafico = new ContenedorGraficoDeCasilla();
+		this.grafico = new ContenedorGraficoDigito();
 	}
 	
 	//METODOS
-		/*
-		 * Actualiza el valor de la casilla, y su contenedorGrafico.
-		 */
-		public void actualizar() 
+	public int getCantElementos() 
+	{
+		return this.grafico.getImagenes().length;
+	}
+	
+	public Integer getValor() 
+	{
+		return this.numero;
+	}
+	
+	public void setValor(Integer numeroNuevo) 
+	{
+		if (numeroNuevo != null && numeroNuevo < this.getCantElementos()) 
 		{
-			if (this.numero != null && this.numero + 1 < this.getCantElementos()) 
-			{
-				this.numero++;
-			}
-			else 
-			{
-				this.numero = 0;
-			}
-			
-			grafico.actualizar(this.numero);
+			this.numero = numeroNuevo;
 		}
 		
-		public Boolean getEstado()
-		{
-			return this.estado;
-		}
-		
-		public void setEstado(boolean estado)
-		{
-			this.estado = estado;
-		}
-		
-		public int getCantElementos() 
-		{
-			return this.grafico.getImagenes().length;
-		}
-		
-		public Integer getValor() 
-		{
-			return this.numero;
-		}
-		
-		public void setValor(Integer numeroNuevo) 
-		{
-			if (numeroNuevo!=null && numeroNuevo < this.getCantElementos()) 
-			{
-				this.numero = numeroNuevo;
-				this.grafico.actualizar(this.numero);
-			}
-			else 
-			{
-				this.numero = null;
-			}
-		}
-		
-		public ContenedorGraficoDeCasilla getEntidadGrafica() 
-		{
-			return this.grafico;
-		}
-		
-		public void setGrafica(ContenedorGraficoDeCasilla g) 
-		{
-			this.grafico = g;
-		}
-		
-		public int gePosicion()
-		{
-			return this.posicion;
-		}
+		grafico.actualizar(this.numero);
+	}
+	
+	public ContenedorGrafico getGrafica() 
+	{
+		return this.grafico;
+	}
+	
+	public void setGrafica(ContenedorGrafico g) 
+	{
+		this.grafico = g;
+	}
+	
+	public int gePosicion()
+	{
+		return this.posicion;
+	}
 }

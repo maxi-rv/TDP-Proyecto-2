@@ -1,16 +1,12 @@
 package Logica;
 import javax.swing.ImageIcon;
 
-public class ContenedorGraficoDeReloj
+public class ContenedorGraficoDigito extends ContenedorGrafico
 {
-	//ATRIBUTOS
-		protected ImageIcon imagen;
-		protected String[] rutaImagenes;
-	
 	/*
 	 * Crea un Contenedor Grafico de imagenes.
 	 */
-	public ContenedorGraficoDeReloj()
+	public ContenedorGraficoDigito()
 	{
 		this.imagen = new ImageIcon();
 		this.rutaImagenes = new String[]{"/img/Number_0.png", "/img/Number_1.png", "/img/Number_2.png",
