@@ -393,7 +393,7 @@ public class Sudoku
 		{
 			for (int j=0; j<cantFilas; j++) 
 			{
-				int valor = rand.nextInt(10);
+				int valor = rand.nextInt(2);
 				if(valor==0)
 				{
 					tablero[i][j] = new Casilla(i,j);
