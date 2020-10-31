@@ -5,6 +5,7 @@ public class Casilla extends Celda
 	//ATRIBUTOS
 	ContenedorGraficoCasilla grafico;
 	protected Boolean estado;
+	protected Boolean bloqueado;
 	protected int fila;
 	protected int columna;
 	

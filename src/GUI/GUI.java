@@ -102,7 +102,9 @@ public class GUI {
 		//Crea una instancia del juego Sudoku.
 		try 
 		{
-			sudoku = new Sudoku();
+			JFrame f = new JFrame();  
+	        String ruta = JOptionPane.showInputDialog(f, "Ingrese la ruta del archivo solucion:");
+			sudoku = new Sudoku(ruta);
 		} 
 		catch (Exception e1) 
 		{

@@ -6,9 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Random;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 public class Sudoku 
 {
 	//ATRIBUTOS
@@ -18,12 +15,12 @@ public class Sudoku
 	/*
 	 * Crea una sesion de Sudoku.
 	 */
-	public Sudoku() throws Exception
+	public Sudoku(String ruta) throws Exception
 	{
 		this.cantFilas = 9;
 		tablero = new Casilla[this.cantFilas][this.cantFilas];
 		
-		if(!cargarArchivo())
+		if(!cargarArchivo(ruta))
 		{
 			throw new Exception("Error: El formato del archivo es incorrecto.");
 		}
@@ -39,41 +36,30 @@ public class Sudoku
 	
 	//METODOS
 	/*
-	 * 
+	 * La accion de juego sobre una casilla.
+	 * Actualiza el valor de la casilla y chequea su correctitud y la de todas las columnas y filas correspondientes.
 	 */
 	public void accionar(Casilla c) 
 	{
 		c.actualizar();
-		
-		//Verifica Fila, Columna, y Panel. 
-		if(this.chequearColumnaCompleta(c) & this.chequearFilaCompleta(c) & this.chequearPanelCompleta(c))
-		{
-			c.setEstado(true);
-		}
-		else
-		{
-			c.setEstado(false);
-		}
+			
+		chequearCasilla(c);
 	}
 	
-	/*
-	 * 
-	 */
+	
 	public Casilla getCasilla(int i, int j) 
 	{
 		return this.tablero[i][j];
 	}
 	
-	/*
-	 * 
-	 */
+	
 	public int getCantFilas() 
 	{
 		return this.cantFilas;
 	}
 	
 	/*
-	 * 
+	 * Chequea el estado del tablero para indicar si el juego esta ganado.
 	 */
 	public boolean ganoSudoku()
 	{
@@ -86,9 +72,25 @@ public class Sudoku
 	}
 	
 	/*
-	 * 
+	 * Chequea la correctitud de la casilla segun toda si Fila, Cloumna, y Panel.
 	 */
-	private boolean chequearFila(Casilla c)
+	private void chequearCasilla(Casilla c)
+    {
+    	//Verifica Fila, Columna, y Panel. 
+		if(this.chequearColumnaCompleta(c) & this.chequearFilaCompleta(c) & this.chequearPanelCompleta(c))
+		{
+			c.setEstado(true);
+		}
+		else
+		{
+			c.setEstado(false);
+		}
+    }
+	
+	/*
+	 * Chequear Fila para el metodo chequearCasilla()
+	 */
+	private boolean chequearFilaCompleta(Casilla c)
 	{
 		boolean toReturn = true;
 		int fila = c.getFila();
@@ -97,10 +99,19 @@ public class Sudoku
 		{
 			if(tablero[fila][indiceColumna]!=c && tablero[fila][indiceColumna].getValor()!=null)
 			{
-				if(tablero[fila][indiceColumna].getValor().equals(c.getValor()))
-				{
-					toReturn = false;
-				}
+				Casilla cAux = tablero[fila][indiceColumna];
+				
+        		if(cAux.getValor().equals(c.getValor()))
+            	{
+        			cAux.setEstado(false);
+        			toReturn = false;
+            	}
+        		else
+        		{
+        			if(cAux.getEstado()!=null && cAux.getEstado()==false)
+        				if(chequearFilaAUX(cAux) & chequearColumnaAUX(cAux) & chequearPanelAUX(cAux))
+        					cAux.setEstado(true);			
+        		}
 			}
 		}
 		
@@ -108,9 +119,9 @@ public class Sudoku
 	}
 	
 	/*
-	 * 
+	 * Chequear Columna para el metodo chequearCasilla()
 	 */
-	private boolean chequearColumna(Casilla c)
+	private boolean chequearColumnaCompleta(Casilla c)
 	{
 		boolean toReturn = true;
 		int columna = c.getColumna();
@@ -119,10 +130,19 @@ public class Sudoku
 		{
 			if(tablero[indiceFila][columna]!=c && tablero[indiceFila][columna].getValor()!=null)
 			{
-				if(tablero[indiceFila][columna].getValor().equals(c.getValor()))
-				{
-					toReturn = false;
-				}
+				Casilla cAux = tablero[indiceFila][columna];
+				
+        		if(cAux.getValor().equals(c.getValor()))
+            	{
+        			cAux.setEstado(false);
+        			toReturn = false;
+            	}
+        		else
+        		{
+        			if(cAux.getEstado()!=null && cAux.getEstado()==false)
+        				if(chequearFilaAUX(cAux) & chequearColumnaAUX(cAux) & chequearPanelAUX(cAux))
+        					cAux.setEstado(true);			
+        		}
 			}
 		}
 		
@@ -130,9 +150,9 @@ public class Sudoku
 	}
 	
 	/*
-	 * 
+	 * Chequear Panel para el metodo chequearCasilla()
 	 */
-	private boolean chequearPanel(Casilla c)
+	private boolean chequearPanelCompleta(Casilla c)
 	{
 		boolean toReturn = true;
 		
@@ -147,10 +167,19 @@ public class Sudoku
             {
             	if(tablero[indiceFila][indiceColumna]!=c && tablero[indiceFila][indiceColumna].getValor()!=null)
 	    		{
-            		if(tablero[indiceFila][indiceColumna].getValor().equals(c.getValor()))
+            		Casilla cAux = tablero[indiceFila][indiceColumna];
+            		
+            		if(cAux.getValor().equals(c.getValor()))
 	            	{
-	            		toReturn = false;
+            			cAux.setEstado(false);
+            			toReturn = false;
 	            	}
+            		else
+            		{
+            			if(cAux.getEstado()!=null && cAux.getEstado()==false)
+            				if(chequearFilaAUX(cAux) & chequearColumnaAUX(cAux) & chequearPanelAUX(cAux))
+            					cAux.setEstado(true);			
+            		}
 	    		}
             	indiceColumna++;
             }
@@ -161,9 +190,9 @@ public class Sudoku
 	}
 	
 	/*
-	 * 
+	 * Chequear Fila para el metodo chequearFilaCompleta()
 	 */
-	private boolean chequearFilaCompleta(Casilla c)
+	private boolean chequearFilaAUX(Casilla c)
 	{
 		boolean toReturn = true;
 		int fila = c.getFila();
@@ -177,10 +206,6 @@ public class Sudoku
 					tablero[fila][indiceColumna].setEstado(false);
 					toReturn = false;
 				}
-				else
-        		{
-        			tablero[fila][indiceColumna].setEstado(true);
-        		}
 			}
 		}
 		
@@ -188,9 +213,9 @@ public class Sudoku
 	}
 	
 	/*
-	 * 
+	 * Chequear Columna para el metodo chequearColumnaCompleta()
 	 */
-	private boolean chequearColumnaCompleta(Casilla c)
+	private boolean chequearColumnaAUX(Casilla c)
 	{
 		boolean toReturn = true;
 		int columna = c.getColumna();
@@ -204,10 +229,6 @@ public class Sudoku
 					tablero[indiceFila][columna].setEstado(false);
 					toReturn = false;
 				}
-				else
-        		{
-        			tablero[indiceFila][columna].setEstado(true);
-        		}
 			}
 		}
 		
@@ -215,9 +236,9 @@ public class Sudoku
 	}
 	
 	/*
-	 * 
+	 * Chequear Panel para el metodo chequearPanelCompleta()
 	 */
-	private boolean chequearPanelCompleta(Casilla c)
+	private boolean chequearPanelAUX(Casilla c)
 	{
 		boolean toReturn = true;
 		
@@ -237,10 +258,6 @@ public class Sudoku
             			tablero[indiceFila][indiceColumna].setEstado(false);
             			toReturn = false;
 	            	}
-            		else
-            		{
-            			tablero[indiceFila][indiceColumna].setEstado(true);
-            		}
 	    		}
             	indiceColumna++;
             }
@@ -251,7 +268,8 @@ public class Sudoku
 	}
 	
 	/*
-	 * 
+	 * Necesario para todos los chequeos de panel.
+	 * Devuelve el primer indice, x o y, del panel.
 	 */
     private int encontrarPrimerIndiceDePanel(int indice) 
     {
@@ -264,18 +282,15 @@ public class Sudoku
     }
     
     /*
-     * 
+     * Carga el archivo desde la ruta pasada por parametro.
      */
-    private boolean cargarArchivo() throws Exception 
+    private boolean cargarArchivo(String ruta) throws Exception 
 	{
     	boolean toReturn = true;
     	
     	File archivo = null;
         FileReader fr = null;
         BufferedReader br = null;
-		
-        JFrame f = new JFrame();  
-        String ruta = JOptionPane.showInputDialog(f, "Ingrese la ruta del archivo solucion:");
         
         if (ruta==null)
         {
@@ -351,7 +366,7 @@ public class Sudoku
 	}
     
     /*
-     * 
+     * Verifica que el archivo cargado a la tabla, sea valido.
      */
     private boolean verificarTabla()
 	{
@@ -380,6 +395,81 @@ public class Sudoku
 		}
     	
     	return toReturn;
+	}
+    
+    /*
+	 * Chequear Fila para el metodo chequearFilaCompleta()
+	 */
+	private boolean chequearFila(Casilla c)
+	{
+		boolean toReturn = true;
+		int fila = c.getFila();
+		
+		for(int indiceColumna=0; indiceColumna<cantFilas; indiceColumna++)
+		{
+			if(tablero[fila][indiceColumna]!=c && tablero[fila][indiceColumna].getValor()!=null)
+			{
+				if(tablero[fila][indiceColumna].getValor().equals(c.getValor()))
+				{
+					toReturn = false;
+				}
+			}
+		}
+		
+		return toReturn;
+	}
+	
+	/*
+	 * Chequear Columna para el metodo chequearColumnaCompleta()
+	 */
+	private boolean chequearColumna(Casilla c)
+	{
+		boolean toReturn = true;
+		int columna = c.getColumna();
+		
+		for(int indiceFila=0; indiceFila<cantFilas; indiceFila++)
+		{
+			if(tablero[indiceFila][columna]!=c && tablero[indiceFila][columna].getValor()!=null)
+			{
+				if(tablero[indiceFila][columna].getValor().equals(c.getValor()))
+				{
+					toReturn = false;
+				}
+			}
+		}
+		
+		return toReturn;
+	}
+	
+	/*
+	 * Chequear Panel para el metodo chequearPanelCompleta()
+	 */
+	private boolean chequearPanel(Casilla c)
+	{
+		boolean toReturn = true;
+		
+		int primerFila = encontrarPrimerIndiceDePanel(c.getFila());
+        int primerColumna = encontrarPrimerIndiceDePanel(c.getColumna());
+        int indiceFila = primerFila;
+        int indiceColumna = primerColumna;
+        
+        while(toReturn && indiceFila<primerFila+3) 
+        {
+            while(toReturn && indiceColumna<primerColumna+3)
+            {
+            	if(tablero[indiceFila][indiceColumna]!=c && tablero[indiceFila][indiceColumna].getValor()!=null)
+	    		{
+            		if(tablero[indiceFila][indiceColumna].getValor().equals(c.getValor()))
+	            	{
+	            		toReturn = false;
+	            	}
+	    		}
+            	indiceColumna++;
+            }
+            indiceFila++;
+        }
+        
+        return toReturn;
 	}
     
     /*
